@@ -1,4 +1,16 @@
-FROM buildpack-deps:stretch
+FROM debian:buster
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		bzip2 \
+		ca-certificates \
+		libffi-dev \
+		libgdbm3 \
+		libssl-dev \
+		libyaml-dev \
+		procps \
+		zlib1g-dev \
+	&& rm -rf /var/lib/apt/lists/*
 
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
@@ -7,21 +19,32 @@ RUN mkdir -p /usr/local/etc \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR 2.6-rc
-ENV RUBY_VERSION 2.6.0-preview2
-ENV RUBY_DOWNLOAD_SHA256 00ddfb5e33dee24469dd0b203597f7ecee66522ebb496f620f5815372ea2d3ec
-ENV RUBYGEMS_VERSION 2.7.7
-ENV BUNDLER_VERSION 1.16.3
+ENV RUBY_MAJOR 2.6
+ENV RUBY_VERSION 2.6.5
+ENV RUBY_DOWNLOAD_SHA256 d5d6da717fd48524596f9b78ac5a2eeb9691753da5c06923a6c31190abe01a62
+ENV RUBYGEMS_VERSION 3.0.1
+ENV BUNDLER_VERSION 1.17.2
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -ex \
 	\
 	&& buildDeps=' \
+		autoconf \
 		bison \
 		dpkg-dev \
+		gcc \
+		libbz2-dev \
 		libgdbm-dev \
+		libglib2.0-dev \
+		libncurses-dev \
+		libreadline-dev \
+		libxml2-dev \
+		libxslt-dev \
+		make \
 		ruby \
+		wget \
+		xz-utils \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends libjemalloc-dev $buildDeps \
@@ -56,6 +79,9 @@ RUN set -ex \
 	&& make install \
 	&& ruby -r rbconfig -e "puts RbConfig::CONFIG['libs']" \
 	\
+	&& dpkg-query --show --showformat '${package}\n' \
+		| grep -P '^libreadline\d+$' \
+		| xargs apt-mark manual \
 	&& apt-get purge -y --auto-remove $buildDeps \
 	&& cd / \
 	&& rm -r /usr/src/ruby \
