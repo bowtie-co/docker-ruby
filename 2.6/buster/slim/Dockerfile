@@ -5,7 +5,7 @@ RUN apt-get update \
 		bzip2 \
 		ca-certificates \
 		libffi-dev \
-		libgdbm3 \
+		libgmp-dev \
 		libssl-dev \
 		libyaml-dev \
 		procps \
@@ -35,6 +35,7 @@ RUN set -ex \
 		dpkg-dev \
 		gcc \
 		libbz2-dev \
+		libgdbm-compat-dev \
 		libgdbm-dev \
 		libglib2.0-dev \
 		libncurses-dev \
