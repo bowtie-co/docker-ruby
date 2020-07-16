@@ -1,4 +1,4 @@
-FROM buildpack-deps:jessie
+FROM buildpack-deps:%%PLACEHOLDER%%
 
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
@@ -7,11 +7,11 @@ RUN mkdir -p /usr/local/etc \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_MAJOR 2.3
-ENV RUBY_VERSION 2.3.8
-ENV RUBY_DOWNLOAD_SHA256 910f635d84fd0d81ac9bdee0731279e6026cb4cd1315bbbb5dfb22e09c5c1dfe
-ENV RUBYGEMS_VERSION 3.1.4
-ENV BUNDLER_VERSION 2.1.4
+ENV RUBY_MAJOR %%VERSION%%
+ENV RUBY_VERSION %%FULL_VERSION%%
+ENV RUBY_DOWNLOAD_SHA256 %%SHA256%%
+ENV RUBYGEMS_VERSION %%RUBYGEMS%%
+ENV BUNDLER_VERSION %%BUNDLER%%
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
@@ -21,6 +21,8 @@ RUN set -ex \
 		bison \
 		dpkg-dev \
 		libgdbm-dev \
+		# ruby 2.3 on stretch can only support libssl1.0-dev (libssl dev from buildpack-deps is 1.1.x)
+		libssl1.0-dev \
 		ruby \
 	' \
 	&& apt-get update \

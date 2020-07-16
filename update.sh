@@ -67,7 +67,7 @@ for version in "${versions[@]}"; do
 
 	for v in \
 		alpine{3.6,3.7} \
-		{jessie,stretch}{/slim,} \
+		{jessie,stretch,buster}{/slim,} \
 	; do
 		dir="$version/$v"
 		variant="$(basename "$v")"
@@ -96,6 +96,10 @@ for version in "${versions[@]}"; do
 			)" \
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
+
+		if [ ! -f $version/Dockerfile ]; then
+			cp $dir/Dockerfile $version/Dockerfile
+		fi
 
 		travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
 

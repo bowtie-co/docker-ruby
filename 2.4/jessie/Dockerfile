@@ -8,10 +8,10 @@ RUN mkdir -p /usr/local/etc \
 	} >> /usr/local/etc/gemrc
 
 ENV RUBY_MAJOR 2.4
-ENV RUBY_VERSION 2.4.4
-ENV RUBY_DOWNLOAD_SHA256 1d0034071d675193ca769f64c91827e5f54cb3a7962316a41d5217c7bc6949f0
-ENV RUBYGEMS_VERSION 2.7.7
-ENV BUNDLER_VERSION 1.16.3
+ENV RUBY_VERSION 2.4.10
+ENV RUBY_DOWNLOAD_SHA256 d5668ed11544db034f70aec37d11e157538d639ed0d0a968e2f587191fc530df
+ENV RUBYGEMS_VERSION 3.1.4
+ENV BUNDLER_VERSION 2.1.4
 
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
