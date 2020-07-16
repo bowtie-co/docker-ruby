@@ -22,9 +22,13 @@ for version in "${versions[@]}"; do
 
     echo "Build $repo:$tag (from $dockerfile)"
     echo " Also $repo:$full_version"
-    # docker build -f $dockerfile -t $repo:$tag .
-    # docker push $repo:$tag
 
+    docker build -f $dockerfile -t $repo:$tag .
+
+    docker tag $repo:$tag $repo:$full_version
+
+    # docker push $repo:$tag
+    # docker push $repo:$full_version
   else
     echo "CANNOT Build $repo:$tag (MISSING: $dockerfile)"
   fi

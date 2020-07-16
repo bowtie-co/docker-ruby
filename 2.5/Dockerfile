@@ -1,17 +1,5 @@
 FROM debian:stretch
 
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
-		bzip2 \
-		ca-certificates \
-		libffi-dev \
-		libgdbm3 \
-		libssl-dev \
-		libyaml-dev \
-		procps \
-		zlib1g-dev \
-	&& rm -rf /var/lib/apt/lists/*
-
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
 	&& { \
@@ -28,26 +16,23 @@ ENV BUNDLER_VERSION 2.1.4
 # some of ruby's build scripts are written in ruby
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -ex \
-	\
+	&& baseDeps=' \
+		zlib1g-dev \
+		libssl-dev \
+		openssl \
+		libjemalloc-dev \
+	' \
 	&& buildDeps=' \
-		autoconf \
 		bison \
 		dpkg-dev \
-		gcc \
-		libbz2-dev \
 		libgdbm-dev \
-		libglib2.0-dev \
-		libncurses-dev \
-		libreadline-dev \
-		libxml2-dev \
-		libxslt-dev \
-		make \
 		ruby \
 		wget \
-		xz-utils \
+		autoconf \
+		build-essential \
 	' \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends libjemalloc-dev $buildDeps \
+	&& apt-get install -y --no-install-recommends $baseDeps $buildDeps \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
 	&& wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz" \
@@ -79,14 +64,11 @@ RUN set -ex \
 	&& make install \
 	&& ruby -r rbconfig -e "puts RbConfig::CONFIG['libs']" \
 	\
-	&& dpkg-query --show --showformat '${package}\n' \
-		| grep -P '^libreadline\d+$' \
-		| xargs apt-mark manual \
 	&& apt-get purge -y --auto-remove $buildDeps \
 	&& cd / \
-	&& rm -r /usr/src/ruby \
-	\
-	&& gem update --system "$RUBYGEMS_VERSION" \
+	&& rm -r /usr/src/ruby
+
+RUN gem update --system "$RUBYGEMS_VERSION" \
 	&& gem install bundler --version "$BUNDLER_VERSION" --force \
 	&& rm -r /root/.gem/
 

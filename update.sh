@@ -79,7 +79,8 @@ for version in "${versions[@]}"; do
 			alpine*) template='alpine'; tag="${variant#alpine}" ;;
 			*) template='debian'; tag="$variant" ;;
 		esac
-		template="Dockerfile-${template}.template"
+		# template="Dockerfile-${template}.template"
+		template="template.Dockerfile"
 
 		sed -r \
 			-e 's!%%VERSION%%!'"$version"'!g' \
@@ -97,9 +98,7 @@ for version in "${versions[@]}"; do
 			-e 's/^(FROM (debian|buildpack-deps|alpine)):.*/\1:'"$tag"'/' \
 			"$template" > "$dir/Dockerfile"
 
-		if [ ! -f $version/Dockerfile ]; then
-			cp $dir/Dockerfile $version/Dockerfile
-		fi
+		cp $dir/Dockerfile $version/Dockerfile
 
 		travisEnv='\n  - VERSION='"$version VARIANT=$v$travisEnv"
 
