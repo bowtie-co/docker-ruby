@@ -1,4 +1,4 @@
-FROM debian:%%PLACEHOLDER%%
+FROM debian:buster
 
 # skip installing gem documentation
 RUN mkdir -p /usr/local/etc \
