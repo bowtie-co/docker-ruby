@@ -23,12 +23,10 @@ for version in "${versions[@]}"; do
     full_version=$(cat $dockerfile | grep "ENV RUBY_VERSION" | sed -E 's/ENV RUBY_VERSION //g')
 
     echo "Build $repo:$tag ($dockerfile)"
+    docker build -f $dockerfile -t $repo:$tag .
+
     echo "  Tag $repo:$tag => $repo:$full_version"
-
-
-    # docker build -f $dockerfile -t $repo:$tag .
-
-    # docker tag $repo:$tag $repo:$full_version
+    docker tag $repo:$tag $repo:$full_version
 
     # docker push $repo:$tag
     # docker push $repo:$full_version
