@@ -17,6 +17,9 @@ ENV BUNDLER_VERSION %%BUNDLER%%
 #   we purge system ruby later to make sure our final image uses what we just built
 RUN set -ex \
 	&& baseDeps=' \
+		wget \
+		autoconf \
+		build-essential \
 		zlib1g-dev \
 		libssl-dev \
 		openssl \
@@ -27,9 +30,6 @@ RUN set -ex \
 		dpkg-dev \
 		libgdbm-dev \
 		ruby \
-		wget \
-		autoconf \
-		build-essential \
 	' \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends $baseDeps $buildDeps \
